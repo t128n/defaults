@@ -79,5 +79,6 @@ raw = true
 "~/.bashrc/dotfiles" = { line = 'source "$HOME/Workspace/Repos/github.com/t128n/dotfiles/shell/bashrc"' }
 "~/.bash_profile/bashrc" = { line = '[[ -f ~/.bashrc ]] && source ~/.bashrc' }
 "~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1" = { source = "shell/profile.ps1", mode = "symlink" }
+"windows-terminal-settings" = { source = "windows/terminal/settings.json", mode = "copy", variants = [{ os = "windows", target = "{{ env.LOCALAPPDATA }}/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json" }] }
 "powertoys-keyboard" = { source = "windows/powertoys/Keyboard Manager/default.json", mode = "copy", variants = [{ os = "windows", target = "{{ env.LOCALAPPDATA }}/Microsoft/PowerToys/Keyboard Manager/default.json" }] }
 "powertoys-light-switch" = { source = "windows/powertoys/LightSwitch/settings.json", mode = "copy", variants = [{ os = "windows", target = "{{ env.LOCALAPPDATA }}/Microsoft/PowerToys/LightSwitch/settings.json" }] }

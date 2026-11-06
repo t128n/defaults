@@ -43,6 +43,19 @@ mise dot apply
 . "$HOME\Workspace\Repos\github.com\t128n\dotfiles\shell\profile.ps1"
 ```
 
+## Windows Terminal
+
+On Windows, `mise dot apply` copies `windows/terminal/settings.json` to the
+stable packaged Windows Terminal's `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json`.
+The file captures the current profiles, shortcuts, and color schemes. PowerShell
+7, the default profile, is installed by `mise run packages:core`.
+
+Close Windows Terminal and back up its existing settings before applying. Copy
+deployment overwrites the live file and does not sync UI changes back to the
+repository. To keep those changes, review and copy the live settings back into
+`windows/terminal/settings.json` before applying again. Other Terminal variants,
+such as Preview or unpackaged installs, use different paths and are not managed.
+
 ## PowerToys
 
 On Windows, `mise dot apply` copies the selected PowerToys settings from
