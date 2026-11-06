@@ -6,8 +6,9 @@ t128n File Hierarchy Standard (FHS) for development workspaces.
 $HOME/Workspace/
 ├── Bin/
 ├── Repos/
-│   ├── .worktrees/
-│   └── <host>/<owner>/<repository>/
+│   └── <host>/<owner>/
+│       ├── <repository>/
+│       └── #<repository>-<branch>/
 └── Scratch/
 ```
 
@@ -15,7 +16,7 @@ $HOME/Workspace/
 
 - **Bin/** — Locally installed CLI tools and executables included in the user `PATH`.
 - **Repos/** — Git repositories organized by `<host>/<owner>/<repository>`.
-- **Repos/.worktrees/** — Git worktrees organized by `<host>/<owner>/<repository>/<branch>`.
+- **Repos/<host>/<owner>/#<repository>-<branch>/** — Git worktrees, siblings of their repository. The `#` prefix sets them apart from normal repositories at a glance, with no separate worktree directory to maintain. Created and removed with the `wa`/`wr` git aliases (see `git/gitconfig`).
 - **Scratch/** — Disposable experiments, prototypes, and temporary files.
 
 ## Configuration
@@ -32,20 +33,6 @@ Verify:
 
 ```sh
 ghq root
-```
-
-### `gwq`
-
-Configure the worktree root:
-
-```sh
-gwq config set worktree.basedir "$HOME/Workspace/Repos/.worktrees"
-```
-
-Verify:
-
-```sh
-gwq config get worktree.basedir
 ```
 
 ### `PATH`

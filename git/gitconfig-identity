@@ -1,0 +1,6 @@
+# Configure machine-local Git identity:
+#
+# [user]
+#     name = Your Name
+#     email = me@example.com
+#     signingKey = ~/.ssh/id_ed25519.pub

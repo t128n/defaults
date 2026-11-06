@@ -13,7 +13,6 @@ uv = "0.13"
 fd = "latest"
 gh = "latest"
 ghq = "latest"
-"github:d-kuro/gwq" = "latest"
 hyperfine = "latest"
 jq = "latest"
 ripgrep = "latest"
@@ -42,8 +41,7 @@ opencode = "latest"
 
 
 [dotfiles]
-"~/.config/opencode" = { source = "../opencode", mode = "symlink-each", exclude = [
-    "README.md",
-    "cli.json",
-    "service.json",
-] }
+"~/.gitconfig" = { source = "git/gitconfig", mode = "symlink" }
+"~/.gitconfig-identity" = { source = "git/identity.example", mode = "copy", create_if_missing = true }
+"~/.config/starship.toml" = { source = "starship/starship.toml", mode = "symlink" }
+"~/.config/opencode" = { source = "opencode", mode = "symlink-each" }

@@ -1,0 +1,37 @@
+[init]
+    defaultBranch = main
+
+[pull]
+    ff = only
+
+[fetch]
+    prune = true
+
+[push]
+    autoSetupRemote = true
+
+[ghq]
+    root = ~/Workspace/Repos
+    user = t128n
+
+[alias]
+    s = status --short --branch
+    wl = worktree list
+    wp = worktree prune
+    wa = "!f() { p=\"../#$(basename \"$PWD\")-$(echo \"$1\" | tr / -)\"; if git show-ref --verify --quiet \"refs/heads/$1\"; then git worktree add \"$p\" \"$1\"; else git worktree add -b \"$1\" \"$p\"; fi; }; f"
+    wr = "!f() { p=\"../#$(basename \"$PWD\")-$(echo \"$1\" | tr / -)\"; git worktree remove \"$p\" && git branch -d \"$1\"; }; f"
+
+[user]
+    useConfigOnly = true
+
+[include]
+    path = ~/.gitconfig-identity
+
+[gpg]
+    format = ssh
+
+[commit]
+    gpgSign = true
+
+[tag]
+    gpgSign = true

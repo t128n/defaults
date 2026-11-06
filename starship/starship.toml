@@ -1,0 +1,97 @@
+format = "$sudo$directory$git_branch$git_state$git_status$bun$nodejs$rust$golang$python$cmd_duration$status$jobs$character"
+continuation_prompt = "[∙](bold #525252) "
+add_newline = true
+
+scan_timeout = 30
+command_timeout = 500
+
+[directory]
+truncation_length = 0
+truncate_to_repo = false
+repo_root_style = "bold #3ddbd9"
+style = "bold #dde1e6"
+format = "[$path]($style)"
+repo_root_format = "[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)"
+
+[directory.substitutions]
+"C:/Workspace/Repos" = "Repos"
+"C:/Workspace" = "Workspace"
+"Workspace/Repos" = "Repos"
+
+[git_branch]
+style = "bold #be95ff"
+format = " on [$branch]($style)"
+
+[git_state]
+style = "bold #78a9ff"
+format = ' \([$state( $progress_current/$progress_total)]($style)\)'
+
+[git_status]
+style = "bold #ee5396"
+format = '([ \[$all_status$ahead_behind\]]($style))'
+conflicted = "="
+ahead = "^$count"
+behind = "v$count"
+diverged = "^$ahead_count v$behind_count"
+untracked = "?$count"
+stashed = "$"
+modified = "!$count"
+staged = "+$count"
+renamed = "r"
+deleted = "x$count"
+ignore_submodules = true
+
+[bun]
+symbol = "bun "
+style = "bold #33b1ff"
+format = " via [$symbol($version)]($style)"
+
+[nodejs]
+symbol = "js "
+style = "bold #33b1ff"
+format = " via [$symbol($version)]($style)"
+
+[rust]
+symbol = "rs "
+style = "bold #33b1ff"
+format = " via [$symbol($version)]($style)"
+
+[golang]
+symbol = "go "
+style = "bold #33b1ff"
+format = " via [$symbol($version)]($style)"
+
+[python]
+symbol = "py "
+style = "bold #33b1ff"
+format = " via [$symbol($version)]($style)"
+
+[package]
+disabled = true
+
+[cmd_duration]
+min_time = 2000
+style = "bold #525252"
+format = " [took $duration]($style)"
+
+[sudo]
+disabled = false
+symbol = "⚡ "
+style = "bold #ee5396"
+format = "[$symbol]($style)"
+
+[status]
+disabled = false
+symbol = "✕"
+style = "bold #ee5396"
+format = " [$symbol $status]($style)"
+
+[jobs]
+symbol = "✦ "
+style = "bold #be95ff"
+number_threshold = 1
+format = " [$symbol$number]($style)"
+
+[character]
+success_symbol = " [::](bold #3ddbd9)"
+error_symbol = " [::](bold #ee5396)"
