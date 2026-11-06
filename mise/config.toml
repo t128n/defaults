@@ -20,6 +20,7 @@ jq = "latest"
 ripgrep = "latest"
 starship = "latest"
 yq = "latest"
+"npm:@oxide/skepsis@latest" = "latest"
 
 # Development tools
 gitleaks = "latest"
