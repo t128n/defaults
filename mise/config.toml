@@ -44,4 +44,6 @@ opencode = "latest"
 [dotfiles]
 "~/.config/opencode" = { source = "../opencode", mode = "symlink-each", exclude = [
     "README.md",
+    "cli.json",
+    "service.json",
 ] }
