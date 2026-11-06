@@ -56,3 +56,11 @@ ssh-add ~/.ssh/id_ed25519
 gh auth login
 gh auth setup-git
 ```
+
+## Software Stack
+
+1. Zed - IDE
+2. Ghostty terminal / Windows Terminal
+3. Zen Browser
+4. ShareX / Shottr screenshot tool
+5. PowerToys
