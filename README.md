@@ -56,6 +56,36 @@ overwrites the managed files; it does not sync changes made in PowerToys back
 to this repository. To keep UI changes, review and copy the corresponding live
 JSON files back into `windows/powertoys` before applying again.
 
+## OpenCode
+
+The shared `opencode/opencode.jsonc` is symlinked into the global OpenCode
+configuration by `mise dot apply`. Edits to that symlink change the shared
+repository file, so keep machine-specific settings in the system configuration
+instead:
+
+| Platform | System configuration file |
+| --- | --- |
+| Windows | `%ProgramData%\opencode\opencode.jsonc` |
+| macOS | `/Library/Application Support/opencode/opencode.jsonc` |
+| Linux | `/etc/opencode/opencode.jsonc` |
+
+For example, add a plugin on one machine with:
+
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": ["opencode-example-plugin"],
+}
+```
+
+Replace the example with the desired plugin package. Plugin lists from applicable
+configuration files are combined; TUI-only plugins use `cli.json` instead.
+System configuration applies to all users on the machine and takes precedence
+over global and project configuration. Writing it may require administrator
+access. It is not managed or restored by this repository; keep secrets out of
+version control. See the OpenCode [configuration](https://opencode.ai/v2/docs/config)
+and [plugins](https://opencode.ai/v2/docs/plugins) documentation.
+
 ## Tasks
 
 ### generating ssh key
