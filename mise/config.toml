@@ -1,8 +1,7 @@
 [settings]
 lockfile = true
-
-[settings.self_update]
-auto = true
+dotfiles.windows_symlinks = true
+self_update.auto = true
 
 [tools]
 # Runtimes
@@ -20,7 +19,7 @@ jq = "latest"
 ripgrep = "latest"
 starship = "latest"
 yq = "latest"
-"npm:@oxide/skepsis@latest" = "latest"
+"npm:@oxide/skepsis" = "latest"
 
 # Development tools
 gitleaks = "latest"
@@ -40,3 +39,9 @@ opencode = "latest"
 "npm:lat.md" = "latest"
 "npm:opensrc" = "latest"
 "npm:skills" = "latest"
+
+
+[dotfiles]
+"~/.config/opencode" = { source = "../opencode", mode = "symlink-each", exclude = [
+    "README.md",
+] }

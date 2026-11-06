@@ -1,0 +1,48 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // Tool versions are managed by mise.
+  "update": "disable",
+
+  // Use project-detected formatters after file modifications.
+  "formatter": true,
+
+  // Require approval for potentially consequential operations.
+  "permissions": [
+    {
+      "action": "external_directory",
+      "resource": "*",
+      "effect": "ask",
+    },
+    {
+      "action": "shell",
+      "resource": "git push *",
+      "effect": "ask",
+    },
+    {
+      "action": "shell",
+      "resource": "git reset --hard *",
+      "effect": "ask",
+    },
+  ],
+
+  // Convenient access to the independent reviewer.
+  "commands": {
+    "review": {
+      "description": "Independently review code, designs, or implementation plans",
+      "agent": "reviewer",
+      "subagent": true,
+      "template": "Independently review $ARGUMENTS. Inspect the relevant implementation, requirements, and project conventions. Report only material, evidence-backed findings. Do not modify files.",
+    },
+  },
+
+  "plugins": [
+    {
+      "package": "@plannotator/opencode@latest",
+      "options": {
+        "workflow": "plan-agent",
+        "planningAgents": ["plan"],
+      },
+    },
+  ],
+}
