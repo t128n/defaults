@@ -47,9 +47,21 @@ run_windows = "winget import --import-file windows/packages/core.json"
 raw = true
 
 [tasks."packages:desktop"]
-description = "Install workstation applications"
-run = 'test "$(uname -s)" = Darwin || { echo "Package groups are supported on macOS and Windows only" >&2; exit 1; }; brew bundle install --file=macos/packages/Brewfile.desktop'
-run_windows = "winget import --import-file windows/packages/desktop.json"
+description = "Install workstation applications and apply Hanok to Zen"
+run = [
+  'test "$(uname -s)" = Darwin || { echo "Package groups are supported on macOS and Windows only" >&2; exit 1; }; brew bundle install --file=macos/packages/Brewfile.desktop',
+  { task = "packages:hanok" },
+]
+run_windows = [
+  "winget import --import-file windows/packages/desktop.json",
+  { task = "packages:hanok" },
+]
+raw = true
+
+[tasks."packages:hanok"]
+description = "Install and apply Hanok configuration to Zen"
+run = 'test "$(uname -s)" = Darwin || { echo "Hanok is supported on macOS and Windows only" >&2; exit 1; }; bash -o pipefail -c "curl -fsSL https://raw.githubusercontent.com/t128n/hanok/main/install.sh | bash"'
+run_windows = '''powershell -NoProfile -Command "$ErrorActionPreference = 'Stop'; irm https://raw.githubusercontent.com/t128n/hanok/main/install.ps1 | iex"'''
 raw = true
 
 [tasks."packages:reverse-engineering"]

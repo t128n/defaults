@@ -126,7 +126,7 @@ packages are not managed by these groups.
 | Task | Software |
 | --- | --- |
 | `mise run packages:core` | Git, Git LFS, and coreutils; PowerShell 7 and NanaZip on Windows |
-| `mise run packages:desktop` | Zed, Zen Browser, DBeaver; Windows Terminal, ShareX, PowerToys, and mRemoteNG on Windows; Ghostty and Shottr on macOS |
+| `mise run packages:desktop` | Zed, Zen Browser with Hanok, DBeaver; Windows Terminal, ShareX, PowerToys, and mRemoteNG on Windows; Ghostty and Shottr on macOS |
 | `mise run packages:reverse-engineering` | ImHex and Wireshark; Ghidra on macOS |
 | `mise run packages:remote-support` | AnyDesk |
 | `mise run packages:diagnostics` | Sysinternals Suite (Windows only) |
@@ -150,3 +150,19 @@ use WinGet or Homebrew directly for updates and removals. Installers may prompt
 for agreements, elevated permissions, or a restart. Package availability can
 vary by OS version and architecture. mise may also install missing configured
 tools when running a task, depending on its settings.
+
+### Zen Browser and Hanok
+
+The Desktop task runs the [Hanok](https://github.com/t128n/hanok) installer
+after the packages are installed. It clones or reuses the Hanok checkout, then
+generates and applies its Zen configuration. This replaces profile files and
+installs browser policies, including force-installed extensions and restrictions
+on other extensions. Hanok backs up replaced files; review its documentation
+before applying it. The installer requires Git on `PATH`.
+
+Zen needs an existing profile for Hanok to configure. On a new installation,
+open Zen once, quit it completely, then run `mise run packages:hanok` to retry
+if the Desktop task could not find a profile. On Windows, applying policies to
+a Zen installation under Program Files requires an elevated terminal. After
+applying, quit Zen completely and reopen it. Zen updates can remove the
+policies; reapply them as described in the Hanok documentation.
