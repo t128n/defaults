@@ -1,4 +1,4 @@
-# @t128n/defaults/fhs
+# @t128n/dotfiles/fhs
 
 t128n File Hierarchy Standard (FHS) for development workspaces.
 

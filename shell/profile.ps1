@@ -1,4 +1,4 @@
-# PowerShell 7 profile — managed by t128n/defaults, edit shell/profile.ps1 in the repo.
+# PowerShell 7 profile — managed by t128n/dotfiles, edit shell/profile.ps1 in the repo.
 
 if (-not $Host.UI -or -not $Host.UI.RawUI) { return }
 

@@ -1,4 +1,4 @@
-# Bash profile — managed by t128n/defaults, edit shell/bashrc in the repo.
+# Bash profile — managed by t128n/dotfiles, edit shell/bashrc in the repo.
 
 case $- in
     *i*) ;;

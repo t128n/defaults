@@ -14,13 +14,13 @@ dotfiles repository
 #### sh
 
 ```sh
-mise bootstrap --from https://github.com/t128n/defaults.git --from-dir "$HOME/Workspace/Repos/github.com/t128n/defaults" --config-dir mise
+mise bootstrap --from https://github.com/t128n/dotfiles.git --from-dir "$HOME/Workspace/Repos/github.com/t128n/dotfiles" --config-dir mise
 ```
 
 #### pwsh
 
 ```pwsh
-mise bootstrap --from https://github.com/t128n/defaults.git --from-dir "$HOME\Workspace\Repos\github.com\t128n\defaults" --config-dir mise
+mise bootstrap --from https://github.com/t128n/dotfiles.git --from-dir "$HOME\Workspace\Repos\github.com\t128n\dotfiles" --config-dir mise
 ```
 
 ## Shell
@@ -38,7 +38,7 @@ mise dot apply
 `$PROFILE` isn't a portable path (it can be redirected by OneDrive or corporate policy), so it isn't managed automatically. Add this line to your `$PROFILE` once:
 
 ```pwsh
-. "$HOME\Workspace\Repos\github.com\t128n\defaults\shell\profile.ps1"
+. "$HOME\Workspace\Repos\github.com\t128n\dotfiles\shell\profile.ps1"
 ```
 
 ## Tasks
