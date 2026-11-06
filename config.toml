@@ -42,6 +42,6 @@ opencode = "latest"
 
 [dotfiles]
 "~/.gitconfig" = { source = "git/gitconfig", mode = "symlink" }
-"~/.gitconfig-identity" = { source = "git/identity.example", mode = "copy", create_if_missing = true }
+"~/.gitconfig-identity" = { source = "git/gitconfig-identity", mode = "copy", create_if_missing = true }
 "~/.config/starship.toml" = { source = "starship/starship.toml", mode = "symlink" }
 "~/.config/opencode" = { source = "opencode", mode = "symlink-each" }
