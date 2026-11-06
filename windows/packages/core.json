@@ -6,7 +6,8 @@
         { "PackageIdentifier": "Git.Git" },
         { "PackageIdentifier": "GitHub.GitLFS" },
         { "PackageIdentifier": "Microsoft.PowerShell" },
-        { "PackageIdentifier": "Microsoft.Coreutils" }
+        { "PackageIdentifier": "Microsoft.Coreutils" },
+        { "PackageIdentifier": "M2Team.NanaZip" }
       ],
       "SourceDetails": {
         "Argument": "https://cdn.winget.microsoft.com/cache",

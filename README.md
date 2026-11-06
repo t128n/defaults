@@ -125,7 +125,7 @@ packages are not managed by these groups.
 
 | Task | Software |
 | --- | --- |
-| `mise run packages:core` | Git, Git LFS, and coreutils; PowerShell 7 on Windows |
+| `mise run packages:core` | Git, Git LFS, and coreutils; PowerShell 7 and NanaZip on Windows |
 | `mise run packages:desktop` | Zed, Zen Browser, DBeaver; Windows Terminal, ShareX, PowerToys, and mRemoteNG on Windows; Ghostty and Shottr on macOS |
 | `mise run packages:reverse-engineering` | ImHex and Wireshark; Ghidra on macOS |
 | `mise run packages:remote-support` | AnyDesk |
