@@ -23,6 +23,8 @@ yq = "latest"
 # Development tools
 gitleaks = "latest"
 hk = "latest"
+semgrep = "latest"
+trivy = "latest"
 "npm:portless" = "latest"
 
 # AI engineering
@@ -34,7 +36,6 @@ opencode = "latest"
 "npm:agent-browser" = "latest"
 "npm:agent-desktop" = "latest"
 "npm:webreel" = "latest"
-"npm:deepsec" = "latest"
 "npm:lat.md" = "latest"
 "npm:opensrc" = "latest"
 "npm:skills" = "latest"
