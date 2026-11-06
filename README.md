@@ -9,18 +9,20 @@ dotfiles repository
 1. [macOS/Linux](https://mise.jdx.dev/installing-mise.html#linux)
 2. [Windows](https://mise.jdx.dev/installing-mise.html#windows-script)
 
+`--config-dir` requires mise v2026.10.21 or newer. Run `mise self-update` first if `mise bootstrap` rejects the flag.
+
 ### Installation
 
 #### sh
 
 ```sh
-mise bootstrap --from https://github.com/t128n/dotfiles.git --from-dir "$HOME/Workspace/Repos/github.com/t128n/dotfiles" --config-dir mise
+mise bootstrap --from https://github.com/t128n/dotfiles.git --from-dir "$HOME/Workspace/Repos/github.com/t128n/dotfiles" --config-dir .
 ```
 
 #### pwsh
 
 ```pwsh
-mise bootstrap --from https://github.com/t128n/dotfiles.git --from-dir "$HOME\Workspace\Repos\github.com\t128n\dotfiles" --config-dir mise
+mise bootstrap --from https://github.com/t128n/dotfiles.git --from-dir "$HOME\Workspace\Repos\github.com\t128n\dotfiles" --config-dir .
 ```
 
 ## Shell
