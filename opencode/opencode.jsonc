@@ -35,14 +35,4 @@
       "template": "Independently review $ARGUMENTS. Inspect the relevant implementation, requirements, and project conventions. Report only material, evidence-backed findings. Do not modify files.",
     },
   },
-
-  "plugins": [
-    {
-      "package": "@plannotator/opencode@latest",
-      "options": {
-        "workflow": "plan-agent",
-        "planningAgents": ["plan"],
-      },
-    },
-  ],
 }
