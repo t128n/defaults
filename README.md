@@ -61,8 +61,14 @@ gh auth setup-git
 
 ## Software Stack
 
-1. Zed - IDE
-2. Ghostty terminal / Windows Terminal
-3. Zen Browser
-4. ShareX / Shottr screenshot tool
-5. PowerToys
+- Zed – IDE
+- Ghostty / Windows Terminal – Terminal
+- Zen Browser – Browser
+- ShareX / Shottr – Screenshots
+- PowerToys – Windows utilities
+- Git / Git LFS – Version control
+- PowerShell 7 / Bash – Shell
+- DBeaver – Database management
+- Ghidra / ImHex – Reverse engineering
+- mRemoteNG / AnyDesk – Remote access
+- Sysinternals Suite – System diagnostics
