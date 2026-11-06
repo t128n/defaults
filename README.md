@@ -1,6 +1,6 @@
-# @t128n/defaults
+# @t128n/dotfiles
 
-defaults repository
+dotfiles repository
 
 ## mise
 
