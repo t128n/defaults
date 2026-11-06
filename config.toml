@@ -40,6 +40,36 @@ opencode = "latest"
 "npm:opensrc" = "latest"
 "npm:skills" = "latest"
 
+[tasks."packages:core"]
+description = "Install core system packages"
+run = 'test "$(uname -s)" = Darwin || { echo "Package groups are supported on macOS and Windows only" >&2; exit 1; }; brew bundle install --file=macos/packages/Brewfile.core'
+run_windows = "winget import --import-file windows/packages/core.json"
+raw = true
+
+[tasks."packages:desktop"]
+description = "Install workstation applications"
+run = 'test "$(uname -s)" = Darwin || { echo "Package groups are supported on macOS and Windows only" >&2; exit 1; }; brew bundle install --file=macos/packages/Brewfile.desktop'
+run_windows = "winget import --import-file windows/packages/desktop.json"
+raw = true
+
+[tasks."packages:reverse-engineering"]
+description = "Install reverse engineering tools"
+run = 'test "$(uname -s)" = Darwin || { echo "Package groups are supported on macOS and Windows only" >&2; exit 1; }; brew bundle install --file=macos/packages/Brewfile.reverse-engineering'
+run_windows = "winget import --import-file windows/packages/reverse-engineering.json"
+raw = true
+
+[tasks."packages:remote-support"]
+description = "Install remote support applications"
+run = 'test "$(uname -s)" = Darwin || { echo "Package groups are supported on macOS and Windows only" >&2; exit 1; }; brew bundle install --file=macos/packages/Brewfile.remote-support'
+run_windows = "winget import --import-file windows/packages/remote-support.json"
+raw = true
+
+[tasks."packages:diagnostics"]
+description = "Install Windows diagnostics tools"
+run = 'echo "The diagnostics group is available on Windows only" >&2; exit 1'
+run_windows = "winget import --import-file windows/packages/diagnostics.json"
+raw = true
+
 
 [dotfiles]
 "~/.gitconfig" = { source = "git/gitconfig", mode = "symlink" }

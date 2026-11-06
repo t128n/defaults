@@ -1,0 +1,3 @@
+brew "ghidra"
+cask "imhex"
+cask "wireshark-app"

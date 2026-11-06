@@ -74,14 +74,36 @@ gh auth setup-git
 
 ## Software Stack
 
-- Zed – IDE
-- Ghostty / Windows Terminal – Terminal
-- Zen Browser – Browser
-- ShareX / Shottr – Screenshots
-- PowerToys – Windows utilities
-- Git / Git LFS – Version control
-- PowerShell 7 / Bash – Shell
-- DBeaver – Database management
-- Ghidra / ImHex – Reverse engineering
-- mRemoteNG / AnyDesk – Remote access
-- Sysinternals Suite – System diagnostics
+mise manages the runtimes and command-line tools in `config.toml`. The optional
+package groups below use [WinGet](https://learn.microsoft.com/windows/package-manager/winget/)
+on Windows and [Homebrew](https://brew.sh/) on macOS. Install the appropriate
+package manager first, then run the tasks from this repository. Linux system
+packages are not managed by these groups.
+
+| Task | Software |
+| --- | --- |
+| `mise run packages:core` | Git, Git LFS, and coreutils; PowerShell 7 on Windows |
+| `mise run packages:desktop` | Zed, Zen Browser, DBeaver; Windows Terminal, ShareX, PowerToys, and mRemoteNG on Windows; Ghostty and Shottr on macOS |
+| `mise run packages:reverse-engineering` | ImHex and Wireshark; Ghidra on macOS |
+| `mise run packages:remote-support` | AnyDesk |
+| `mise run packages:diagnostics` | Sysinternals Suite (Windows only) |
+
+Choose only the groups needed on each machine. For example, an AI server might
+use Core; a work workstation Core and Desktop; and a personal workstation Core,
+Desktop, and Remote Support. No groups are installed automatically, and the
+selection is not remembered. Install applications before applying their settings
+with `mise dot apply`; see the PowerToys section for precautions.
+
+The Windows manifests are in `windows/packages` and the macOS Brewfiles are in
+`macos/packages`. Windows Core uses `Microsoft.Coreutils`; macOS Core uses GNU
+coreutils, whose commands are normally prefixed with `g` (for example, `gls`).
+On Windows, install [Ghidra](https://ghidra-sre.org/) manually: it was not found
+in the WinGet community source. Wireshark live capture on Windows requires
+Npcap; review its installer and license separately.
+
+These are install lists, not full desired-state enforcement: removing an entry
+does not uninstall the application. Re-running a group may upgrade packages;
+use WinGet or Homebrew directly for updates and removals. Installers may prompt
+for agreements, elevated permissions, or a restart. Package availability can
+vary by OS version and architecture. mise may also install missing configured
+tools when running a task, depending on its settings.
