@@ -1,3 +1,3 @@
-# @t128n/template
+# @t128n/defaults
 
-template repository
+defaults repository
