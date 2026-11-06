@@ -43,6 +43,19 @@ mise dot apply
 . "$HOME\Workspace\Repos\github.com\t128n\dotfiles\shell\profile.ps1"
 ```
 
+## PowerToys
+
+On Windows, `mise dot apply` copies the selected PowerToys settings from
+`windows/powertoys` into `%LOCALAPPDATA%\Microsoft\PowerToys`. The managed
+files configure Caps Lock as F24 and schedule app themes to switch at 06:00
+and 18:00. Enable Keyboard Manager and Light Switch in PowerToys separately.
+Command Palette settings and its activation shortcut are not managed here.
+
+Close PowerToys and back up existing settings before applying. Copy deployment
+overwrites the managed files; it does not sync changes made in PowerToys back
+to this repository. To keep UI changes, review and copy the corresponding live
+JSON files back into `windows/powertoys` before applying again.
+
 ## Tasks
 
 ### generating ssh key
