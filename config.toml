@@ -45,3 +45,6 @@ opencode = "latest"
 "~/.gitconfig-identity" = { source = "git/gitconfig-identity", mode = "copy", create_if_missing = true }
 "~/.config/starship.toml" = { source = "starship/starship.toml", mode = "symlink" }
 "~/.config/opencode" = { source = "opencode", mode = "symlink-each" }
+"~/.bashrc/defaults" = { line = 'source "$HOME/Workspace/Repos/github.com/t128n/defaults/shell/bashrc"' }
+"~/.bash_profile/bashrc" = { line = '[[ -f ~/.bashrc ]] && source ~/.bashrc' }
+"~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1" = { source = "shell/profile.ps1", mode = "symlink" }
