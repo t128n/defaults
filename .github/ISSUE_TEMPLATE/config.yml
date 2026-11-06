@@ -1,0 +1,8 @@
+# Based on templates by npmx contributors:
+# https://github.com/npmx-dev/npmx.dev/graphs/contributors?all=1
+
+blank_issues_enabled: true
+contact_links:
+  - name: 📚 Documentation
+    url: https://example.com
+    about: Check the documentation for usage
