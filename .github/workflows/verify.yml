@@ -34,6 +34,11 @@ jobs:
         shell: bash
         run: mise install --locked --dry-run
 
+      - name: Accept WinGet source agreements
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: winget list --accept-source-agreements --disable-interactivity | Out-Null
+
       - name: Report machine-wide package state
         shell: bash
         run: mise bootstrap packages status
