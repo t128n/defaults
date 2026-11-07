@@ -1,0 +1,6 @@
+[bootstrap.packages]
+"winget:Microsoft.PowerToys" = { os = "windows" }
+
+[dotfiles]
+"powertoys-keyboard" = { source = "keyboard-manager.json", mode = "copy", variants = [{ os = "windows", target = "{{ env.LOCALAPPDATA }}/Microsoft/PowerToys/Keyboard Manager/default.json" }] }
+"powertoys-light-switch" = { source = "lightswitch.json", mode = "copy", variants = [{ os = "windows", target = "{{ env.LOCALAPPDATA }}/Microsoft/PowerToys/LightSwitch/settings.json" }] }

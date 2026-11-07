@@ -1,0 +1,5 @@
+[tools]
+opencode = "latest"
+
+[dotfiles]
+"~/.config/opencode" = { source = "config", mode = "symlink-each" }

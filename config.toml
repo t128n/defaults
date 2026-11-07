@@ -3,94 +3,12 @@ lockfile = true
 dotfiles.windows_symlinks = true
 self_update.auto = true
 
-[tools]
-# Runtimes
-bun = "1.4"
-node = "24"
-uv = "0.13"
-
-# Shell & utilities
-fd = "latest"
-gh = "latest"
-ghq = "latest"
-hyperfine = "latest"
-jq = "latest"
-ripgrep = "latest"
-starship = "latest"
-yq = "latest"
-"npm:@oxide/skepsis" = "latest"
-
-# Development tools
-gitleaks = "latest"
-hk = "latest"
-semgrep = "latest"
-trivy = "latest"
-"npm:portless" = "latest"
-
-# AI engineering
-"github:anomalyco/hex" = "latest"
-opencode = "latest"
-
-# Agent tools
-"npm:@ghfs/cli" = "latest"
-"npm:agent-browser" = "latest"
-"npm:agent-desktop" = "latest"
-"npm:webreel" = "latest"
-"npm:lat.md" = "latest"
-"npm:opensrc" = "latest"
-"npm:skills" = "latest"
-
-[tasks."packages:core"]
-description = "Install core system packages"
-run = 'test "$(uname -s)" = Darwin || { echo "Package groups are supported on macOS and Windows only" >&2; exit 1; }; brew bundle install --file=macos/packages/Brewfile.core'
-run_windows = "winget import --import-file windows/packages/core.json"
-raw = true
-
-[tasks."packages:desktop"]
-description = "Install workstation applications and apply Hanok to Zen"
+[tasks.verify]
+description = "Check this machine against the declared configuration"
 run = [
-  'test "$(uname -s)" = Darwin || { echo "Package groups are supported on macOS and Windows only" >&2; exit 1; }; brew bundle install --file=macos/packages/Brewfile.desktop',
-  { task = "packages:hanok" },
+  "mise bootstrap plan",
+  "mise bootstrap packages status --missing",
+  "mise dot status --missing",
+  "mise bootstrap status",
+  "mise doctor",
 ]
-run_windows = [
-  "winget import --import-file windows/packages/desktop.json",
-  { task = "packages:hanok" },
-]
-raw = true
-
-[tasks."packages:hanok"]
-description = "Install and apply Hanok configuration to Zen"
-run = 'test "$(uname -s)" = Darwin || { echo "Hanok is supported on macOS and Windows only" >&2; exit 1; }; bash -o pipefail -c "curl -fsSL https://raw.githubusercontent.com/t128n/hanok/main/install.sh | bash"'
-run_windows = '''powershell -NoProfile -Command "$ErrorActionPreference = 'Stop'; irm https://raw.githubusercontent.com/t128n/hanok/main/install.ps1 | iex"'''
-raw = true
-
-[tasks."packages:reverse-engineering"]
-description = "Install reverse engineering tools"
-run = 'test "$(uname -s)" = Darwin || { echo "Package groups are supported on macOS and Windows only" >&2; exit 1; }; brew bundle install --file=macos/packages/Brewfile.reverse-engineering'
-run_windows = "winget import --import-file windows/packages/reverse-engineering.json"
-raw = true
-
-[tasks."packages:remote-support"]
-description = "Install remote support applications"
-run = 'test "$(uname -s)" = Darwin || { echo "Package groups are supported on macOS and Windows only" >&2; exit 1; }; brew bundle install --file=macos/packages/Brewfile.remote-support'
-run_windows = "winget import --import-file windows/packages/remote-support.json"
-raw = true
-
-[tasks."packages:diagnostics"]
-description = "Install Windows diagnostics tools"
-run = 'echo "The diagnostics group is available on Windows only" >&2; exit 1'
-run_windows = "winget import --import-file windows/packages/diagnostics.json"
-raw = true
-
-
-[dotfiles]
-"~/.gitconfig" = { source = "git/gitconfig", mode = "symlink" }
-"~/.gitconfig-identity" = { source = "git/gitconfig-identity", mode = "copy", create_if_missing = true }
-"~/.config/starship.toml" = { source = "starship/starship.toml", mode = "symlink" }
-"~/.config/opencode" = { source = "opencode", mode = "symlink-each" }
-"~/.bashrc/dotfiles" = { line = 'source "$HOME/Workspace/Repos/github.com/t128n/dotfiles/shell/bashrc"' }
-"~/.bash_profile/bashrc" = { line = '[[ -f ~/.bashrc ]] && source ~/.bashrc' }
-"~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1" = { source = "shell/profile.ps1", mode = "symlink" }
-"windows-terminal-settings" = { source = "windows/terminal/settings.json", mode = "copy", variants = [{ os = "windows", target = "{{ env.LOCALAPPDATA }}/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json" }] }
-"powertoys-keyboard" = { source = "windows/powertoys/Keyboard Manager/default.json", mode = "copy", variants = [{ os = "windows", target = "{{ env.LOCALAPPDATA }}/Microsoft/PowerToys/Keyboard Manager/default.json" }] }
-"powertoys-light-switch" = { source = "windows/powertoys/LightSwitch/settings.json", mode = "copy", variants = [{ os = "windows", target = "{{ env.LOCALAPPDATA }}/Microsoft/PowerToys/LightSwitch/settings.json" }] }

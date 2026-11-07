@@ -16,7 +16,7 @@ $HOME/Workspace/
 
 - **Bin/** — Locally installed CLI tools and executables included in the user `PATH`.
 - **Repos/** — Git repositories organized by `<host>/<owner>/<repository>`.
-- **Repos/<host>/<owner>/#<repository>-<branch>/** — Git worktrees, siblings of their repository. The `#` prefix sets them apart from normal repositories at a glance, with no separate worktree directory to maintain. Created and removed with the `wa`/`wr` git aliases (see `git/gitconfig`).
+- **Repos/<host>/<owner>/#<repository>-<branch>/** — Git worktrees, siblings of their repository. The `#` prefix sets them apart from normal repositories at a glance, with no separate worktree directory to maintain. Created and removed with the `wa`/`wr` git aliases (see `conf.d/git/gitconfig`).
 - **Scratch/** — Disposable experiments, prototypes, and temporary files.
 
 ## Configuration
@@ -37,7 +37,9 @@ ghq root
 
 ### `PATH`
 
-Add `Workspace/Bin` to the user `PATH`.
+The managed shell profiles (`conf.d/shell/bashrc` and `conf.d/shell/profile.ps1`) add
+`Workspace/Bin` to `PATH` for interactive shells. On Windows, also add it to
+the user `PATH` so GUI applications and tools outside PowerShell can find it:
 
 #### Windows (PowerShell)
 
@@ -55,17 +57,3 @@ if ($bin -notin ($path -split ";")) {
 ```
 
 Restart the terminal to apply the change.
-
-#### macOS / Linux
-
-Add to `~/.bashrc`:
-
-```sh
-export PATH="$HOME/Workspace/Bin:$PATH"
-```
-
-Apply to the current session:
-
-```
-source ~/.bashrc
-```

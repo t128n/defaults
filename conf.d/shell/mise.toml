@@ -1,0 +1,5 @@
+[dotfiles]
+"~/.config/dotfiles/shell/bashrc" = { source = "bashrc", mode = "symlink" }
+"~/.bashrc/dotfiles" = { line = 'source "$HOME/.config/dotfiles/shell/bashrc"' }
+"~/.bash_profile/bashrc" = { line = '[[ -f ~/.bashrc ]] && source ~/.bashrc' }
+"~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1" = { source = "profile.ps1", mode = "symlink" }

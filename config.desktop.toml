@@ -1,0 +1,21 @@
+[bootstrap.packages]
+"winget:Microsoft.PowerShell" = { os = "windows" }
+"winget:Microsoft.Coreutils" = { os = "windows" }
+"winget:M2Team.NanaZip" = { os = "windows" }
+"winget:ZedIndustries.Zed" = { os = "windows" }
+"winget:Zen-Team.Zen-Browser" = { os = "windows" }
+"winget:ShareX.ShareX" = { os = "windows" }
+"winget:DBeaver.DBeaver.Community" = { os = "windows" }
+"winget:mRemoteNG.mRemoteNG" = { os = "windows" }
+"brew:coreutils" = { os = "macos" }
+"brew-cask:zed" = { os = "macos" }
+"brew-cask:ghostty" = { os = "macos" }
+"brew-cask:zen" = { os = "macos" }
+"brew-cask:shottr" = { os = "macos" }
+"brew-cask:dbeaver-community" = { os = "macos" }
+
+[tasks."packages:hanok"]
+description = "Install and apply Hanok configuration to Zen"
+run = 'test "$(uname -s)" = Darwin || { echo "Hanok is supported on macOS and Windows only" >&2; exit 1; }; bash -o pipefail -c "curl -fsSL https://raw.githubusercontent.com/t128n/hanok/main/install.sh | bash"'
+run_windows = '''powershell -NoProfile -Command "$ErrorActionPreference = 'Stop'; irm https://raw.githubusercontent.com/t128n/hanok/main/install.ps1 | iex"'''
+raw = true
