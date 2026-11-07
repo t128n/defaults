@@ -1,0 +1,2 @@
+[bootstrap.packages]
+"winget:Microsoft.Sysinternals.Suite" = { os = "windows" }

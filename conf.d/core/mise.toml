@@ -1,0 +1,6 @@
+# Installed by `mise bootstrap` on every machine, including servers.
+[bootstrap.packages]
+"winget:Git.Git" = { os = "windows" }
+"winget:GitHub.GitLFS" = { os = "windows" }
+"brew:git" = { os = "macos" }
+"brew:git-lfs" = { os = "macos" }

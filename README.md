@@ -1,8 +1,43 @@
 # @t128n/dotfiles
 
-Declarative Windows and macOS workstation setup, applied with [mise](https://mise.jdx.dev/). The repository is designed to be the global mise configuration: `--config-dir .` links the checkout to `~/.config/mise`, so `config.toml` describes tools, machine-wide packages, and dotfiles in one place.
+Declarative Windows and macOS workstation setup, applied with [mise](https://mise.jdx.dev/). The repository is designed to be the global mise configuration: `--config-dir .` links the checkout to `~/.config/mise`. Each feature owns a folder in `conf.d/` with its packages, tools, dotfiles, and source files together.
 
 Linux is not a supported target yet. Package declarations are scoped to `windows` and `macos`.
+
+## Layout
+
+```
+config.toml                      settings and the verify task only
+conf.d/
+  tools.toml                     shared runtimes and CLI tools
+  core/mise.toml                 packages for every machine
+  git/                           mise.toml, gitconfig, gitconfig-identity
+  shell/                         mise.toml, bashrc, profile.ps1
+  starship/                      mise.toml, starship.toml
+  opencode/                      mise.toml, config/ (linked into ~/.config/opencode)
+  terminal/                      mise.desktop.toml, settings.json
+  powertoys/                     mise.desktop.toml, keyboard-manager.json, lightswitch.json
+config.<profile>.toml            optional package groups
+```
+
+Conventions:
+
+1. `config.toml` is infrastructure. Application configuration lives in `conf.d/<feature>/`.
+2. A feature folder owns its packages, tools, dotfiles, and source files. A relative `source` resolves inside that folder.
+3. `mise.<profile>.toml` inside a folder loads only when that profile is selected. It is not an OS selector: use `os =` and `variants` for OS differences.
+4. `config.<profile>.toml` describes an optional capability set. Machine-specific choices stay untracked.
+5. Keep application-native formats (PowerToys JSON, OpenCode JSONC). Do not invent a shared schema.
+6. Prefer declarative resources over tasks. `mise bootstrap plan` and `mise bootstrap status` are the standard checks.
+
+### Selecting profiles
+
+Profiles are mise config environments: `desktop`, `reverse-engineering`, `remote-support`, `diagnostics`. Select them for one run with `-E`, or persist them on a machine in the untracked `miserc.local.toml` in the config directory:
+
+```toml
+env = ["desktop"]
+```
+
+Without a selection, only core packages and the shared dotfiles apply. The Windows Terminal and PowerToys dotfiles need `desktop`.
 
 ## Quickstart
 
@@ -34,9 +69,9 @@ mise run verify
 
 | Concern | Owner | Deployed by |
 | --- | --- | --- |
-| Development tools | `[tools]` in `config.toml` | `mise bootstrap` |
-| Machine-wide packages | `[bootstrap.packages]` | `mise bootstrap` |
-| User configuration files | `[dotfiles]` | `mise bootstrap` / `mise dot apply` |
+| Development tools | `[tools]` in `conf.d/tools.toml` and feature folders | `mise bootstrap` |
+| Machine-wide packages | `[bootstrap.packages]` in `conf.d/` and `config.<profile>.toml` | `mise bootstrap` |
+| User configuration files | `[dotfiles]` in `conf.d/<feature>/mise.toml` | `mise bootstrap` / `mise dot apply` |
 | Tool versions | `mise.lock`, `locks/` | committed |
 
 `mise.lock` pins every tool for each supported platform. Update deliberately:
@@ -50,7 +85,7 @@ Commit both `mise.lock` and `locks/` with the upgrade.
 
 ## Packages
 
-`[bootstrap.packages]` replaces the per-OS manifests that this repository used to carry. The manager prefix selects the native package manager, and `os` and `env` restrict where an entry applies.
+`[bootstrap.packages]` replaces the per-OS manifests that this repository used to carry. The manager prefix selects the native package manager, and `os` restricts where an entry applies. Profile files decide which groups are active.
 
 ### Core
 
@@ -60,7 +95,7 @@ Nothing else is installed unless you select a group.
 
 ### Optional groups
 
-Groups are mise config environments. Select one with `-E`:
+Groups are mise config environments. Their packages live in `config.<group>.toml`, or in `conf.d/<feature>/mise.<group>.toml` when they belong to a feature (Windows Terminal, PowerToys). Select one with `-E`:
 
 ```sh
 mise -E desktop bootstrap packages apply
@@ -107,14 +142,15 @@ These declarations are install state, not full ownership:
 mise run verify
 ```
 
-The task runs four checks:
+The task runs five checks:
 
-1. `mise bootstrap packages status --missing` — core packages differ from the declaration.
-2. `mise dot status --missing` — a dotfile is missing or differs.
-3. `mise bootstrap status` — tools, packages, dotfiles, and services.
-4. `mise doctor` — mise health.
+1. `mise bootstrap plan` — preview of what a bootstrap would change.
+2. `mise bootstrap packages status --missing` — core packages differ from the declaration.
+3. `mise dot status --missing` — a dotfile is missing or differs.
+4. `mise bootstrap status` — tools, packages, dotfiles, and services.
+5. `mise doctor` — mise health.
 
-`--missing` makes the first two exit non-zero, so `verify` fails when the machine has drifted. Optional groups are checked only when selected: `mise -E desktop run verify`.
+`--missing` makes checks 2 and 3 exit non-zero, so `verify` fails when the machine has drifted. Optional groups are checked only when selected: `mise -E desktop run verify`.
 
 CI runs the same configuration on Linux, macOS, and Windows, but only validates and reports state. It does not install machine-wide packages.
 
@@ -132,7 +168,7 @@ mise dot apply          # or discard them and restore the repository version
 
 ## Dotfiles
 
-The `[dotfiles]` table in `config.toml` owns:
+The `[dotfiles]` tables in `conf.d/*/mise*.toml` own:
 
 | Target | Mode |
 | --- | --- |
@@ -154,12 +190,12 @@ The `[dotfiles]` table in `config.toml` owns:
 `$PROFILE` is not a portable path: OneDrive or corporate policy can redirect it. The repository therefore deploys to the default `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1`. If your profile lives elsewhere, add this line to it once:
 
 ```pwsh
-. "$HOME\Workspace\Repos\github.com\t128n\dotfiles\shell\profile.ps1"
+. "$HOME\Workspace\Repos\github.com\t128n\dotfiles\conf.d\shell\profile.ps1"
 ```
 
 ## OpenCode
 
-The shared `opencode/opencode.jsonc` is symlinked into the global OpenCode configuration. Edits to the symlink change the repository file, so keep machine-specific settings in the system configuration instead:
+The shared `conf.d/opencode/config/opencode.jsonc` is symlinked into the global OpenCode configuration. Edits to the symlink change the repository file, so keep machine-specific settings in the system configuration instead:
 
 | Platform | System configuration file |
 | --- | --- |

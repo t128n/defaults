@@ -1,0 +1,3 @@
+[bootstrap.packages]
+"winget:AnyDesk.AnyDesk" = { os = "windows" }
+"brew-cask:anydesk" = { os = "macos" }

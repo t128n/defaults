@@ -39,17 +39,25 @@ jobs:
         shell: pwsh
         run: winget list --accept-source-agreements --disable-interactivity | Out-Null
 
+      - name: Preview the bootstrap plan
+        shell: bash
+        run: mise bootstrap plan
+
+      - name: Preview the desktop bootstrap plan
+        shell: bash
+        run: mise -E desktop bootstrap plan
+
       - name: Report machine-wide package state
         shell: bash
         run: mise bootstrap packages status
 
       - name: Report dotfile state
         shell: bash
-        run: mise dot status --json
+        run: mise -E desktop dot status --json
 
       - name: Check bash syntax
         shell: bash
-        run: bash -n shell/bashrc
+        run: bash -n conf.d/shell/bashrc
 
       - name: Check PowerShell syntax
         if: runner.os == 'Windows'
@@ -57,7 +65,7 @@ jobs:
         run: |
           $errors = $null
           [System.Management.Automation.Language.Parser]::ParseFile(
-            (Resolve-Path 'shell/profile.ps1'),
+            (Resolve-Path 'conf.d/shell/profile.ps1'),
             [ref]$null,
             [ref]$errors
           ) | Out-Null

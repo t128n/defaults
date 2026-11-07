@@ -1,0 +1,6 @@
+[bootstrap.packages]
+"winget:WerWolv.ImHex" = { os = "windows" }
+"winget:WiresharkFoundation.Wireshark" = { os = "windows" }
+"brew:ghidra" = { os = "macos" }
+"brew-cask:imhex" = { os = "macos" }
+"brew-cask:wireshark-app" = { os = "macos" }

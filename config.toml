@@ -3,108 +3,12 @@ lockfile = true
 dotfiles.windows_symlinks = true
 self_update.auto = true
 
-[tools]
-# Runtimes
-bun = "1.4"
-node = "24"
-uv = "0.13"
-
-# Shell & utilities
-fd = "latest"
-gh = "latest"
-ghq = "latest"
-hyperfine = "latest"
-jq = "latest"
-ripgrep = "latest"
-starship = "latest"
-yq = "latest"
-"npm:@oxide/skepsis" = "latest"
-
-# Development tools
-gitleaks = "latest"
-hk = "latest"
-semgrep = "latest"
-trivy = "latest"
-"npm:portless" = "latest"
-
-# AI engineering
-"github:anomalyco/hex" = "latest"
-opencode = "latest"
-
-# Agent tools
-"npm:@ghfs/cli" = "latest"
-"npm:agent-browser" = "latest"
-"npm:agent-desktop" = "latest"
-"npm:webreel" = "latest"
-"npm:opensrc" = "latest"
-"npm:skills" = "latest"
-
-# Machine-wide packages. Core is installed by `mise bootstrap` on every
-# machine, including servers. Everything else is opt-in through a config
-# environment, for example `mise -E desktop bootstrap packages apply`.
-[bootstrap.packages]
-# Core
-"winget:Git.Git" = { os = "windows" }
-"winget:GitHub.GitLFS" = { os = "windows" }
-"brew:git" = { os = "macos" }
-"brew:git-lfs" = { os = "macos" }
-
-# Desktop
-"winget:Microsoft.PowerShell" = { os = "windows", env = "desktop" }
-"winget:Microsoft.Coreutils" = { os = "windows", env = "desktop" }
-"winget:M2Team.NanaZip" = { os = "windows", env = "desktop" }
-"winget:ZedIndustries.Zed" = { os = "windows", env = "desktop" }
-"winget:Microsoft.WindowsTerminal" = { os = "windows", env = "desktop" }
-"winget:Zen-Team.Zen-Browser" = { os = "windows", env = "desktop" }
-"winget:ShareX.ShareX" = { os = "windows", env = "desktop" }
-"winget:Microsoft.PowerToys" = { os = "windows", env = "desktop" }
-"winget:DBeaver.DBeaver.Community" = { os = "windows", env = "desktop" }
-"winget:mRemoteNG.mRemoteNG" = { os = "windows", env = "desktop" }
-"brew:coreutils" = { os = "macos", env = "desktop" }
-"brew-cask:zed" = { os = "macos", env = "desktop" }
-"brew-cask:ghostty" = { os = "macos", env = "desktop" }
-"brew-cask:zen" = { os = "macos", env = "desktop" }
-"brew-cask:shottr" = { os = "macos", env = "desktop" }
-"brew-cask:dbeaver-community" = { os = "macos", env = "desktop" }
-
-# Reverse engineering
-"winget:WerWolv.ImHex" = { os = "windows", env = "reverse-engineering" }
-"winget:WiresharkFoundation.Wireshark" = { os = "windows", env = "reverse-engineering" }
-"brew:ghidra" = { os = "macos", env = "reverse-engineering" }
-"brew-cask:imhex" = { os = "macos", env = "reverse-engineering" }
-"brew-cask:wireshark-app" = { os = "macos", env = "reverse-engineering" }
-
-# Remote support
-"winget:AnyDesk.AnyDesk" = { os = "windows", env = "remote-support" }
-"brew-cask:anydesk" = { os = "macos", env = "remote-support" }
-
-# Diagnostics
-"winget:Microsoft.Sysinternals.Suite" = { os = "windows", env = "diagnostics" }
-
 [tasks.verify]
 description = "Check this machine against the declared configuration"
 run = [
+  "mise bootstrap plan",
   "mise bootstrap packages status --missing",
   "mise dot status --missing",
   "mise bootstrap status",
   "mise doctor",
 ]
-
-[tasks."packages:hanok"]
-description = "Install and apply Hanok configuration to Zen"
-run = 'test "$(uname -s)" = Darwin || { echo "Hanok is supported on macOS and Windows only" >&2; exit 1; }; bash -o pipefail -c "curl -fsSL https://raw.githubusercontent.com/t128n/hanok/main/install.sh | bash"'
-run_windows = '''powershell -NoProfile -Command "$ErrorActionPreference = 'Stop'; irm https://raw.githubusercontent.com/t128n/hanok/main/install.ps1 | iex"'''
-raw = true
-
-[dotfiles]
-"~/.config/dotfiles/shell/bashrc" = { source = "shell/bashrc", mode = "symlink" }
-"~/.gitconfig" = { source = "git/gitconfig", mode = "symlink" }
-"~/.gitconfig-identity" = { source = "git/gitconfig-identity", mode = "copy", create_if_missing = true }
-"~/.config/starship.toml" = { source = "starship/starship.toml", mode = "symlink" }
-"~/.config/opencode" = { source = "opencode", mode = "symlink-each" }
-"~/.bashrc/dotfiles" = { line = 'source "$HOME/.config/dotfiles/shell/bashrc"' }
-"~/.bash_profile/bashrc" = { line = '[[ -f ~/.bashrc ]] && source ~/.bashrc' }
-"~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1" = { source = "shell/profile.ps1", mode = "symlink" }
-"windows-terminal-settings" = { source = "windows/terminal/settings.json", mode = "copy", variants = [{ os = "windows", target = "{{ env.LOCALAPPDATA }}/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json" }] }
-"powertoys-keyboard" = { source = "windows/powertoys/Keyboard Manager/default.json", mode = "copy", variants = [{ os = "windows", target = "{{ env.LOCALAPPDATA }}/Microsoft/PowerToys/Keyboard Manager/default.json" }] }
-"powertoys-light-switch" = { source = "windows/powertoys/LightSwitch/settings.json", mode = "copy", variants = [{ os = "windows", target = "{{ env.LOCALAPPDATA }}/Microsoft/PowerToys/LightSwitch/settings.json" }] }

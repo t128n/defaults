@@ -1,0 +1,33 @@
+[tools]
+# Runtimes
+bun = "1.4"
+node = "24"
+uv = "0.13"
+
+# Shell & utilities
+fd = "latest"
+gh = "latest"
+ghq = "latest"
+hyperfine = "latest"
+jq = "latest"
+ripgrep = "latest"
+yq = "latest"
+"npm:@oxide/skepsis" = "latest"
+
+# Development tools
+gitleaks = "latest"
+hk = "latest"
+semgrep = "latest"
+trivy = "latest"
+"npm:portless" = "latest"
+
+# AI engineering
+"github:anomalyco/hex" = "latest"
+
+# Agent tools
+"npm:@ghfs/cli" = "latest"
+"npm:agent-browser" = "latest"
+"npm:agent-desktop" = "latest"
+"npm:webreel" = "latest"
+"npm:opensrc" = "latest"
+"npm:skills" = "latest"
