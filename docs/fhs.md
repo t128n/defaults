@@ -37,7 +37,9 @@ ghq root
 
 ### `PATH`
 
-Add `Workspace/Bin` to the user `PATH`.
+The managed shell profiles (`shell/bashrc` and `shell/profile.ps1`) add
+`Workspace/Bin` to `PATH` for interactive shells. On Windows, also add it to
+the user `PATH` so GUI applications and tools outside PowerShell can find it:
 
 #### Windows (PowerShell)
 
@@ -55,17 +57,3 @@ if ($bin -notin ($path -split ";")) {
 ```
 
 Restart the terminal to apply the change.
-
-#### macOS / Linux
-
-Add to `~/.bashrc`:
-
-```sh
-export PATH="$HOME/Workspace/Bin:$PATH"
-```
-
-Apply to the current session:
-
-```
-source ~/.bashrc
-```

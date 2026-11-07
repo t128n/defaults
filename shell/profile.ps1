@@ -141,15 +141,15 @@ function global:mkcd {
 function global:ws {
     param([string]$Sub = '')
     switch ($Sub.ToLower()) {
-        'repos'  { Set-Location 'C:\Workspace\Repos'; break }
-        'portal' { Set-Location 'C:\Workspace\Portal'; break }
-        'cache'  { Set-Location 'C:\Workspace\Cache'; break }
-        'spikes' { Set-Location 'C:\Workspace\Spikes'; break }
-        'setup'  { Set-Location 'C:\Workspace\Setup'; break }
-        default  { Set-Location 'C:\Workspace'; break }
+        'repos'  { Set-Location "$HOME\Workspace\Repos"; break }
+        'portal' { Set-Location "$HOME\Workspace\Portal"; break }
+        'cache'  { Set-Location "$HOME\Workspace\Cache"; break }
+        'spikes' { Set-Location "$HOME\Workspace\Spikes"; break }
+        'setup'  { Set-Location "$HOME\Workspace\Setup"; break }
+        default  { Set-Location "$HOME\Workspace"; break }
     }
 }
-function global:portal { Set-Location 'C:\Workspace\Portal' }
+function global:portal { Set-Location "$HOME\Workspace\Portal" }
 
 # Quality of life
 function global:Test-Admin {

@@ -6,7 +6,6 @@ case $- in
 esac
 
 export LANG=${LANG:-en_US.UTF-8}
-export LC_ALL=${LC_ALL:-en_US.UTF-8}
 
 HISTCONTROL=ignoreboth:erasedups
 HISTSIZE=10000
@@ -86,7 +85,9 @@ alias ....='cd ../../..'
 mkcd() { mkdir -p "$1" && cd "$1"; }
 
 ws() {
-    case "${1,,}" in
+    local sub
+    sub=$(printf '%s' "${1:-}" | tr '[:upper:]' '[:lower:]')
+    case "$sub" in
         repos)  cd "$HOME/Workspace/Repos" ;;
         portal) cd "$HOME/Workspace/Portal" ;;
         cache)  cd "$HOME/Workspace/Cache" ;;

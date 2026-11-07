@@ -36,27 +36,59 @@ opencode = "latest"
 "npm:agent-browser" = "latest"
 "npm:agent-desktop" = "latest"
 "npm:webreel" = "latest"
-"npm:lat.md" = "latest"
 "npm:opensrc" = "latest"
 "npm:skills" = "latest"
 
-[tasks."packages:core"]
-description = "Install core system packages"
-run = 'test "$(uname -s)" = Darwin || { echo "Package groups are supported on macOS and Windows only" >&2; exit 1; }; brew bundle install --file=macos/packages/Brewfile.core'
-run_windows = "winget import --import-file windows/packages/core.json"
-raw = true
+# Machine-wide packages. Core is installed by `mise bootstrap` on every
+# machine, including servers. Everything else is opt-in through a config
+# environment, for example `mise -E desktop bootstrap packages apply`.
+[bootstrap.packages]
+# Core
+"winget:Git.Git" = { os = "windows" }
+"winget:GitHub.GitLFS" = { os = "windows" }
+"brew:git" = { os = "macos" }
+"brew:git-lfs" = { os = "macos" }
 
-[tasks."packages:desktop"]
-description = "Install workstation applications and apply Hanok to Zen"
+# Desktop
+"winget:Microsoft.PowerShell" = { os = "windows", env = "desktop" }
+"winget:Microsoft.Coreutils" = { os = "windows", env = "desktop" }
+"winget:M2Team.NanaZip" = { os = "windows", env = "desktop" }
+"winget:ZedIndustries.Zed" = { os = "windows", env = "desktop" }
+"winget:Microsoft.WindowsTerminal" = { os = "windows", env = "desktop" }
+"winget:Zen-Team.Zen-Browser" = { os = "windows", env = "desktop" }
+"winget:ShareX.ShareX" = { os = "windows", env = "desktop" }
+"winget:Microsoft.PowerToys" = { os = "windows", env = "desktop" }
+"winget:DBeaver.DBeaver.Community" = { os = "windows", env = "desktop" }
+"winget:mRemoteNG.mRemoteNG" = { os = "windows", env = "desktop" }
+"brew:coreutils" = { os = "macos", env = "desktop" }
+"brew-cask:zed" = { os = "macos", env = "desktop" }
+"brew-cask:ghostty" = { os = "macos", env = "desktop" }
+"brew-cask:zen" = { os = "macos", env = "desktop" }
+"brew-cask:shottr" = { os = "macos", env = "desktop" }
+"brew-cask:dbeaver-community" = { os = "macos", env = "desktop" }
+
+# Reverse engineering
+"winget:WerWolv.ImHex" = { os = "windows", env = "reverse-engineering" }
+"winget:WiresharkFoundation.Wireshark" = { os = "windows", env = "reverse-engineering" }
+"brew:ghidra" = { os = "macos", env = "reverse-engineering" }
+"brew-cask:imhex" = { os = "macos", env = "reverse-engineering" }
+"brew-cask:wireshark-app" = { os = "macos", env = "reverse-engineering" }
+
+# Remote support
+"winget:AnyDesk.AnyDesk" = { os = "windows", env = "remote-support" }
+"brew-cask:anydesk" = { os = "macos", env = "remote-support" }
+
+# Diagnostics
+"winget:Microsoft.Sysinternals.Suite" = { os = "windows", env = "diagnostics" }
+
+[tasks.verify]
+description = "Check this machine against the declared configuration"
 run = [
-  'test "$(uname -s)" = Darwin || { echo "Package groups are supported on macOS and Windows only" >&2; exit 1; }; brew bundle install --file=macos/packages/Brewfile.desktop',
-  { task = "packages:hanok" },
+  "mise bootstrap packages status --missing",
+  "mise dot status --missing",
+  "mise bootstrap status",
+  "mise doctor",
 ]
-run_windows = [
-  "winget import --import-file windows/packages/desktop.json",
-  { task = "packages:hanok" },
-]
-raw = true
 
 [tasks."packages:hanok"]
 description = "Install and apply Hanok configuration to Zen"
@@ -64,31 +96,13 @@ run = 'test "$(uname -s)" = Darwin || { echo "Hanok is supported on macOS and Wi
 run_windows = '''powershell -NoProfile -Command "$ErrorActionPreference = 'Stop'; irm https://raw.githubusercontent.com/t128n/hanok/main/install.ps1 | iex"'''
 raw = true
 
-[tasks."packages:reverse-engineering"]
-description = "Install reverse engineering tools"
-run = 'test "$(uname -s)" = Darwin || { echo "Package groups are supported on macOS and Windows only" >&2; exit 1; }; brew bundle install --file=macos/packages/Brewfile.reverse-engineering'
-run_windows = "winget import --import-file windows/packages/reverse-engineering.json"
-raw = true
-
-[tasks."packages:remote-support"]
-description = "Install remote support applications"
-run = 'test "$(uname -s)" = Darwin || { echo "Package groups are supported on macOS and Windows only" >&2; exit 1; }; brew bundle install --file=macos/packages/Brewfile.remote-support'
-run_windows = "winget import --import-file windows/packages/remote-support.json"
-raw = true
-
-[tasks."packages:diagnostics"]
-description = "Install Windows diagnostics tools"
-run = 'echo "The diagnostics group is available on Windows only" >&2; exit 1'
-run_windows = "winget import --import-file windows/packages/diagnostics.json"
-raw = true
-
-
 [dotfiles]
+"~/.config/dotfiles/shell/bashrc" = { source = "shell/bashrc", mode = "symlink" }
 "~/.gitconfig" = { source = "git/gitconfig", mode = "symlink" }
 "~/.gitconfig-identity" = { source = "git/gitconfig-identity", mode = "copy", create_if_missing = true }
 "~/.config/starship.toml" = { source = "starship/starship.toml", mode = "symlink" }
 "~/.config/opencode" = { source = "opencode", mode = "symlink-each" }
-"~/.bashrc/dotfiles" = { line = 'source "$HOME/Workspace/Repos/github.com/t128n/dotfiles/shell/bashrc"' }
+"~/.bashrc/dotfiles" = { line = 'source "$HOME/.config/dotfiles/shell/bashrc"' }
 "~/.bash_profile/bashrc" = { line = '[[ -f ~/.bashrc ]] && source ~/.bashrc' }
 "~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1" = { source = "shell/profile.ps1", mode = "symlink" }
 "windows-terminal-settings" = { source = "windows/terminal/settings.json", mode = "copy", variants = [{ os = "windows", target = "{{ env.LOCALAPPDATA }}/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json" }] }

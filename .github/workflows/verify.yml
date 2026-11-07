@@ -1,0 +1,62 @@
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: verify (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    env:
+      MISE_CONFIG_DIR: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: jdx/mise-action@v3
+        with:
+          install: false
+
+      - name: Load the configuration
+        shell: bash
+        run: mise config ls
+
+      - name: Check that the lockfile covers every tool
+        shell: bash
+        run: mise install --locked --dry-run
+
+      - name: Report machine-wide package state
+        shell: bash
+        run: mise bootstrap packages status
+
+      - name: Report dotfile state
+        shell: bash
+        run: mise dot status --json
+
+      - name: Check bash syntax
+        shell: bash
+        run: bash -n shell/bashrc
+
+      - name: Check PowerShell syntax
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path 'shell/profile.ps1'),
+            [ref]$null,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error $_.Message }
+            exit 1
+          }

@@ -1,80 +1,165 @@
 # @t128n/dotfiles
 
-dotfiles repository
+Declarative Windows and macOS workstation setup, applied with [mise](https://mise.jdx.dev/). The repository is designed to be the global mise configuration: `--config-dir .` links the checkout to `~/.config/mise`, so `config.toml` describes tools, machine-wide packages, and dotfiles in one place.
 
-## mise
+Linux is not a supported target yet. Package declarations are scoped to `windows` and `macos`.
 
-### Preqrequsites
+## Quickstart
 
-1. [macOS/Linux](https://mise.jdx.dev/installing-mise.html#linux)
-2. [Windows](https://mise.jdx.dev/installing-mise.html#windows-script)
+Prerequisites:
 
-`--config-dir` requires mise v2026.10.21 or newer. Run `mise self-update` first if `mise bootstrap` rejects the flag.
+1. Install [mise](https://mise.jdx.dev/installing-mise.html).
+2. On macOS, install [Homebrew](https://brew.sh/) first — the `brew:` entries use it.
+3. On Windows, WinGet ships with Windows 10/11.
 
-### Installation
-
-#### sh
+Then bootstrap the machine:
 
 ```sh
 mise bootstrap --from https://github.com/t128n/dotfiles.git --from-dir "$HOME/Workspace/Repos/github.com/t128n/dotfiles" --config-dir .
 ```
 
-#### pwsh
-
 ```pwsh
 mise bootstrap --from https://github.com/t128n/dotfiles.git --from-dir "$HOME\Workspace\Repos\github.com\t128n\dotfiles" --config-dir .
 ```
 
-## Shell
+`--config-dir` requires mise v2026.10.21 or newer. Run `mise self-update` if the flag is rejected.
 
-### bash
-
-Wired automatically via mise's `[dotfiles]` managed lines (see `config.toml`): a line sourcing `shell/bashrc` is added to `~/.bashrc`, and `~/.bash_profile` is made to source `~/.bashrc` for login shells. Deploy with:
+After bootstrap, check the result:
 
 ```sh
-mise dot apply
+mise run verify
 ```
 
-### PowerShell 7
+## What is managed
 
-`$PROFILE` isn't a portable path (it can be redirected by OneDrive or corporate policy), so it isn't managed automatically. Add this line to your `$PROFILE` once:
+| Concern | Owner | Deployed by |
+| --- | --- | --- |
+| Development tools | `[tools]` in `config.toml` | `mise bootstrap` |
+| Machine-wide packages | `[bootstrap.packages]` | `mise bootstrap` |
+| User configuration files | `[dotfiles]` | `mise bootstrap` / `mise dot apply` |
+| Tool versions | `mise.lock`, `locks/` | committed |
+
+`mise.lock` pins every tool for each supported platform. Update deliberately:
+
+```sh
+mise upgrade
+mise lock --bump
+```
+
+Commit both `mise.lock` and `locks/` with the upgrade.
+
+## Packages
+
+`[bootstrap.packages]` replaces the per-OS manifests that this repository used to carry. The manager prefix selects the native package manager, and `os` and `env` restrict where an entry applies.
+
+### Core
+
+Core installs on every machine, including servers: Git and Git LFS.
+
+Nothing else is installed unless you select a group.
+
+### Optional groups
+
+Groups are mise config environments. Select one with `-E`:
+
+```sh
+mise -E desktop bootstrap packages apply
+mise -E reverse-engineering bootstrap packages apply
+mise -E remote-support bootstrap packages apply
+mise -E diagnostics bootstrap packages apply
+```
+
+| Group | Windows | macOS |
+| --- | --- | --- |
+| `desktop` | PowerShell 7, Coreutils, NanaZip, Zed, Windows Terminal, Zen, ShareX, PowerToys, DBeaver, mRemoteNG | coreutils, Zed, Ghostty, Zen, Shottr, DBeaver |
+| `reverse-engineering` | ImHex, Wireshark | Ghidra, ImHex, Wireshark |
+| `remote-support` | AnyDesk | AnyDesk |
+| `diagnostics` | Sysinternals Suite | — |
+
+Preview and inspect a group without changing anything:
+
+```sh
+mise -E desktop bootstrap packages status
+mise -E desktop bootstrap packages apply --dry-run
+```
+
+After the desktop group, apply the browser configuration separately:
+
+```sh
+mise run packages:hanok
+```
+
+The Hanok installer clones or reuses its checkout, generates the Zen configuration, and applies browser policies. It needs Git on `PATH`. Zen needs an existing profile: open Zen once and quit it completely before running the task. On Windows, applying policies to a Zen installation under Program Files requires an elevated terminal.
+
+### Limits
+
+These declarations are install state, not full ownership:
+
+- WinGet has no `state = "absent"` or `prune`. Deleting an entry does not uninstall the application. Remove it with `winget uninstall`.
+- A `"latest"` entry accepts whatever version is installed. Use `mise bootstrap packages upgrade` (add `-E <group>` for optional groups) to update installed packages.
+- Homebrew formulae can be pruned explicitly, for example `mise bootstrap packages prune --manager brew --dry-run`. Review the output before running it.
+- Installers may prompt for agreements, elevation, or a restart.
+- Ghidra is not available from the WinGet community source; install it manually on Windows.
+
+## Verify and drift
+
+```sh
+mise run verify
+```
+
+The task runs four checks:
+
+1. `mise bootstrap packages status --missing` — core packages differ from the declaration.
+2. `mise dot status --missing` — a dotfile is missing or differs.
+3. `mise bootstrap status` — tools, packages, dotfiles, and services.
+4. `mise doctor` — mise health.
+
+`--missing` makes the first two exit non-zero, so `verify` fails when the machine has drifted. Optional groups are checked only when selected: `mise -E desktop run verify`.
+
+CI runs the same configuration on Linux, macOS, and Windows, but only validates and reports state. It does not install machine-wide packages.
+
+### Copy-mode files
+
+Windows Terminal and PowerToys settings are managed with `mode = "copy"`: the repository wins. When the application rewrites its file, `mise dot status` reports `differs`. Reconcile deliberately:
+
+```sh
+mise dot diff           # inspect the difference
+mise dot add --changed  # copy intentional live edits back into the repository
+mise dot apply          # or discard them and restore the repository version
+```
+
+`mise dot add --changed` updates the sources in this repository, so review and commit the result.
+
+## Dotfiles
+
+The `[dotfiles]` table in `config.toml` owns:
+
+| Target | Mode |
+| --- | --- |
+| `~/.gitconfig` | symlink |
+| `~/.gitconfig-identity` | copy, created only when missing |
+| `~/.config/starship.toml` | symlink |
+| `~/.config/opencode` | symlink each |
+| `~/.config/dotfiles/shell/bashrc` | symlink |
+| `~/.bashrc` | managed line sourcing the symlink above |
+| `~/.bash_profile` | managed line sourcing `~/.bashrc` |
+| `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1` | symlink |
+| Windows Terminal settings | copy on Windows |
+| PowerToys Keyboard Manager and Light Switch settings | copy on Windows |
+
+`~/.config/dotfiles/shell/bashrc` is a stable path, so the managed line in `~/.bashrc` does not depend on where the repository is cloned.
+
+### PowerShell profile
+
+`$PROFILE` is not a portable path: OneDrive or corporate policy can redirect it. The repository therefore deploys to the default `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1`. If your profile lives elsewhere, add this line to it once:
 
 ```pwsh
 . "$HOME\Workspace\Repos\github.com\t128n\dotfiles\shell\profile.ps1"
 ```
 
-## Windows Terminal
-
-On Windows, `mise dot apply` copies `windows/terminal/settings.json` to the
-stable packaged Windows Terminal's `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json`.
-The file captures the current profiles, shortcuts, and color schemes. PowerShell
-7, the default profile, is installed by `mise run packages:core`.
-
-Close Windows Terminal and back up its existing settings before applying. Copy
-deployment overwrites the live file and does not sync UI changes back to the
-repository. To keep those changes, review and copy the live settings back into
-`windows/terminal/settings.json` before applying again. Other Terminal variants,
-such as Preview or unpackaged installs, use different paths and are not managed.
-
-## PowerToys
-
-On Windows, `mise dot apply` copies the selected PowerToys settings from
-`windows/powertoys` into `%LOCALAPPDATA%\Microsoft\PowerToys`. The managed
-files configure Caps Lock as F24 and schedule app themes to switch at 06:00
-and 18:00. Enable Keyboard Manager and Light Switch in PowerToys separately.
-Command Palette settings and its activation shortcut are not managed here.
-
-Close PowerToys and back up existing settings before applying. Copy deployment
-overwrites the managed files; it does not sync changes made in PowerToys back
-to this repository. To keep UI changes, review and copy the corresponding live
-JSON files back into `windows/powertoys` before applying again.
-
 ## OpenCode
 
-The shared `opencode/opencode.jsonc` is symlinked into the global OpenCode
-configuration by `mise dot apply`. Edits to that symlink change the shared
-repository file, so keep machine-specific settings in the system configuration
-instead:
+The shared `opencode/opencode.jsonc` is symlinked into the global OpenCode configuration. Edits to the symlink change the repository file, so keep machine-specific settings in the system configuration instead:
 
 | Platform | System configuration file |
 | --- | --- |
@@ -91,78 +176,24 @@ For example, add a plugin on one machine with:
 }
 ```
 
-Replace the example with the desired plugin package. Plugin lists from applicable
-configuration files are combined; TUI-only plugins use `cli.json` instead.
-System configuration applies to all users on the machine and takes precedence
-over global and project configuration. Writing it may require administrator
-access. It is not managed or restored by this repository; keep secrets out of
-version control. See the OpenCode [configuration](https://opencode.ai/v2/docs/config)
-and [plugins](https://opencode.ai/v2/docs/plugins) documentation.
+Plugin lists from applicable configuration files are combined; TUI-only plugins use `cli.json` instead. System configuration applies to all users on the machine and takes precedence over global and project configuration. Writing it may require administrator access. It is not managed or restored by this repository; keep secrets out of version control. See the OpenCode [configuration](https://opencode.ai/v2/docs/config) and [plugins](https://opencode.ai/v2/docs/plugins) documentation.
 
-## Tasks
+## Manual tasks
 
-### generating ssh key
+### SSH key
 
 ```sh
 ssh-keygen -t ed25519 -C "me@example.com" -f ~/.ssh/id_ed25519
 ssh-add ~/.ssh/id_ed25519
 ```
 
-### auth against git
+### Git authentication
 
 ```sh
 gh auth login
 gh auth setup-git
 ```
 
-## Software Stack
+## Workspace layout
 
-mise manages the runtimes and command-line tools in `config.toml`. The optional
-package groups below use [WinGet](https://learn.microsoft.com/windows/package-manager/winget/)
-on Windows and [Homebrew](https://brew.sh/) on macOS. Install the appropriate
-package manager first, then run the tasks from this repository. Linux system
-packages are not managed by these groups.
-
-| Task | Software |
-| --- | --- |
-| `mise run packages:core` | Git, Git LFS, and coreutils; PowerShell 7 and NanaZip on Windows |
-| `mise run packages:desktop` | Zed, Zen Browser with Hanok, DBeaver; Windows Terminal, ShareX, PowerToys, and mRemoteNG on Windows; Ghostty and Shottr on macOS |
-| `mise run packages:reverse-engineering` | ImHex and Wireshark; Ghidra on macOS |
-| `mise run packages:remote-support` | AnyDesk |
-| `mise run packages:diagnostics` | Sysinternals Suite (Windows only) |
-
-Choose only the groups needed on each machine. For example, an AI server might
-use Core; a work workstation Core and Desktop; and a personal workstation Core,
-Desktop, and Remote Support. No groups are installed automatically, and the
-selection is not remembered. Install applications before applying their settings
-with `mise dot apply`; see the PowerToys section for precautions.
-
-The Windows manifests are in `windows/packages` and the macOS Brewfiles are in
-`macos/packages`. Windows Core uses `Microsoft.Coreutils`; macOS Core uses GNU
-coreutils, whose commands are normally prefixed with `g` (for example, `gls`).
-On Windows, install [Ghidra](https://ghidra-sre.org/) manually: it was not found
-in the WinGet community source. Wireshark live capture on Windows requires
-Npcap; review its installer and license separately.
-
-These are install lists, not full desired-state enforcement: removing an entry
-does not uninstall the application. Re-running a group may upgrade packages;
-use WinGet or Homebrew directly for updates and removals. Installers may prompt
-for agreements, elevated permissions, or a restart. Package availability can
-vary by OS version and architecture. mise may also install missing configured
-tools when running a task, depending on its settings.
-
-### Zen Browser and Hanok
-
-The Desktop task runs the [Hanok](https://github.com/t128n/hanok) installer
-after the packages are installed. It clones or reuses the Hanok checkout, then
-generates and applies its Zen configuration. This replaces profile files and
-installs browser policies, including force-installed extensions and restrictions
-on other extensions. Hanok backs up replaced files; review its documentation
-before applying it. The installer requires Git on `PATH`.
-
-Zen needs an existing profile for Hanok to configure. On a new installation,
-open Zen once, quit it completely, then run `mise run packages:hanok` to retry
-if the Desktop task could not find a profile. On Windows, applying policies to
-a Zen installation under Program Files requires an elevated terminal. After
-applying, quit Zen completely and reopen it. Zen updates can remove the
-policies; reapply them as described in the Hanok documentation.
+See [docs/fhs.md](docs/fhs.md) for the `$HOME/Workspace` convention and how it interacts with `ghq`.
